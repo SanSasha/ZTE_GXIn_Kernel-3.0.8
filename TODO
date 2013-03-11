@@ -1,0 +1,15 @@
+What's working:
+- booting
+- usb
+- display till goes to sleep mode
+- gsm
+- vibrator
+- we'll see after touch is fixed
+
+Todo list:
+Main:
+- Fix touchscreen
+- Fix display/panel
+- Wifi
+- Fix battery driver
+etc....

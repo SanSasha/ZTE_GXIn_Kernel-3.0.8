@@ -8,8 +8,16 @@ What's working:
 
 Todo list:
 Main:
+- More moto code cleanup
 - Fix touchscreen
 - Fix display/panel
 - Wifi
 - Fix battery driver
 etc....
+
+
+Zte modded/wrote drivers:
+- MHL (SiI8334)
+- Accelero (lsm303dlhc)
+- FFC sensor(ov7692)
+- Led flash (zi2848)

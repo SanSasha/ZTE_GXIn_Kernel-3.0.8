@@ -488,15 +488,8 @@ config BOARD_REDRIDGE
 	  device falls under Redridge board type.
 
 #
-# Motorola Medfield-based Products
+# Medfield-based Products
 #
-config BOARD_MFLD_MOTO
-	bool "Support Motorola's Medfield-based products"
-	depends on X86_MDFLD
-	default n
-	---help---
-	  Medfield based board configuration for Motorola devices. Say yes
-	  here if your device falls under the Motorola umbrella.
 
 config BOARD_CTP
 	bool "Clovertrail board type"

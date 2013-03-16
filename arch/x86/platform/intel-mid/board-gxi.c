@@ -60,7 +60,6 @@
 #include "device_libs/platform_camera.h"
 #include "device_libs/platform_mt9e013.h"
 #include "device_libs/platform_mt9m114.h"
-#include "device_libs/platform_sh833su.h"
 #include "device_libs/platform_a1026.h"
 #include "device_libs/platform_lis3dh.h"
 #include "device_libs/platform_ms5607.h"
@@ -70,7 +69,6 @@
 #include "device_libs/platform_apds990x.h"
 #include "device_libs/platform_lm2755.h"
 #include "device_libs/platform_lm3554.h"
-#include "device_libs/platform_ov7736.h"
 #include "device_libs/platform_mxt224.h"
 #include "device_libs/platform_s3202.h"
 
@@ -91,7 +89,7 @@
  * WIFI devices
  */
 
-#include "device_libs/platform_wl12xx.h"
+/* need here bcmdhd */
 
 /*
  * Bluetooth devices
@@ -132,7 +130,6 @@ const struct devs_id __initconst device_ids[] = {
 	{"max17050", SFI_DEV_TYPE_I2C, 1, &max17042_platform_data, NULL},
 	{"max17042", SFI_DEV_TYPE_I2C, 1, &max17042_platform_data, NULL},
 	{"hsi_ifx_modem", SFI_DEV_TYPE_HSI, 0, &hsi_modem_platform_data, NULL},
-	{"wl12xx_clk_vmmc", SFI_DEV_TYPE_SD, 0, &wl12xx_platform_data, NULL},
 	/* MSIC subdevices */
 	{"msic_battery", SFI_DEV_TYPE_IPC, 1, &msic_battery_platform_data,
 					&ipc_device_handler},
@@ -152,8 +149,6 @@ const struct devs_id __initconst device_ids[] = {
 	 */
 	{"mt9e013", SFI_DEV_TYPE_I2C, 0, &mt9e013_platform_data,
 					&intel_ignore_i2c_device_register},
-	{"lc898211", SFI_DEV_TYPE_I2C, 0, &sh833su_platform_data,
-					&intel_ignore_i2c_device_register},
 	{"mxt224", SFI_DEV_TYPE_I2C, 0, &mxt224_platform_data, NULL},
 	{"synaptics_3202", SFI_DEV_TYPE_I2C, 0, &s3202_platform_data},
 
@@ -164,8 +159,6 @@ const struct devs_id __initconst device_ids[] = {
 	{"gyro", SFI_DEV_TYPE_I2C, 0, &gyro_platform_data, NULL},
 	{"baro", SFI_DEV_TYPE_I2C, 0, &ms5607_platform_data, NULL},
 	{"als", SFI_DEV_TYPE_I2C, 0, &ltr502als_platform_data, NULL},
-	{"ov7736", SFI_DEV_TYPE_I2C, 0, &ov7736_platform_data,
-					&intel_ignore_i2c_device_register},
 	{"lm3556", SFI_DEV_TYPE_I2C, 0, &no_platform_data,
 					&intel_ignore_i2c_device_register},
 	{"lm2755", SFI_DEV_TYPE_I2C, 0, &lm2755_led_platform_data, NULL},
@@ -226,76 +219,10 @@ int __init board_proc_init(void)
 
 early_initcall(board_proc_init);
 
-#define SH833SU_I2C_ADDR	0x72		/* i2c address */
-#define SH833SU_BUS		4		/* i2c bus number */
-
-struct sfi_device_table_entry sh833su_pentry = {
-	.name		=	"lc898211",
-	.host_num	=	SH833SU_BUS,
-	.irq		=	255,
-	.addr		=	SH833SU_I2C_ADDR,
-};
-
-/*
- * Temporary work around for items missing from SFI tables.
- */
-static int __init gxi_i2c_sfi_workaround(void)
-{
-	struct devs_id *dev = NULL;
-
-	/* 
-	 * Add sh833su for detection; remove as soon as sh833su is
-	 * defined in SFI table
-	 */
-	dev = get_device_id(SFI_DEV_TYPE_I2C, "lc898211");
-	if (dev != NULL)
-		intel_ignore_i2c_device_register(&sh833su_pentry, dev);
-	else
-		pr_err("Dev id is NULL for %s\n", "lc898211");
-
-	return 0;
-}
-device_initcall(gxi_i2c_sfi_workaround);
-
-#define FACT_KILL_GPIO_PIN 157  // GP_CORE_061
-
-static void __init mot_init_factory_kill(void)
-{
-	int enable = 1, rc;
-
-	rc = gpio_request(FACT_KILL_GPIO_PIN , "Factory Kill Disable");
-	if (rc) {
-		pr_err("%s: GPIO request failure\n", __func__);
-		goto out;
-	}
-
-	rc = gpio_direction_output(FACT_KILL_GPIO_PIN , enable);
-	if (rc) {
-		pr_err("%s: GPIO configuration failure\n", __func__);
-		goto gpiofree;
-	}
-
-	rc = gpio_export(FACT_KILL_GPIO_PIN , 0);
-	if (rc) {
-		pr_err("%s: GPIO export failure\n", __func__);
-		goto gpiofree;
-	}
-
-	pr_info("%s: Factory Kill Circuit: %s\n", __func__,
-			(enable ? "enabled" : "disabled"));
-
-	return;
-
-gpiofree:
-	gpio_free(FACT_KILL_GPIO_PIN);
-out:
-	return;
-}
-
 #define FUEL_GAUGE_ALERT_PIN 51  /* GP_AON_051 aka "max17042" */
 #define CAMERA_FLASH_PIN 50  /* GP_AON_050 */
 
-static void __init mot_tcmd_export_gpio(void)
+static void __init gxi_tcmd_export_gpio(void)
 {
 	int rc;
 
@@ -439,8 +366,7 @@ static int __init gxi_platform_init(void)
 
 	gxi_register_board_i2c_devs();
 	gxi_sensors_init();
-	mot_init_factory_kill();
-	mot_tcmd_export_gpio();
+	gxi_tcmd_export_gpio();
 	return 0;
 }
 device_initcall(gxi_platform_init);

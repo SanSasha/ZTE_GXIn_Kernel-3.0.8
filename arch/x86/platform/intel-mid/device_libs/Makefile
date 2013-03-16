@@ -73,7 +73,5 @@ obj-$(CONFIG_SUPPORT_TOSHIBA_MIPI_LVDS_BRIDGE)		+= platform_tc35876x.o
 obj-$(CONFIG_USB_PENWELL_OTG)				+= platform_usb_otg.o
 obj-$(CONFIG_SERIAL_MFD_HSU)				+= platform_hsu.o
 obj-$(CONFIG_LEDS_INTEL_KPD_GPIO)			+= platform_kpd_led_gpio.o
-obj-$(CONFIG_BOARD_MFLD_MOTO)			+= platform_mmi-sensors.o
-obj-$(CONFIG_BOARD_MFLD_MOTO)			+= platform_mmi-keyreset.o
 obj-$(CONFIG_BOARD_MFLD_GXI)			+= platform_gxi-sensors.o
 obj-$(CONFIG_BOARD_MFLD_GXI)			+= platform_gxi-keyreset.o

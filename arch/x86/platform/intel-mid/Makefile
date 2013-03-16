@@ -31,7 +31,5 @@ obj-$(CONFIG_BOARD_REDRIDGE)		+= board-redridge.o
 obj-$(CONFIG_BOARD_CTP)			+= board-ctp.o
 obj-$(CONFIG_BOARD_MRFLD_VP)		+= board-vp.o
 obj-$(CONFIG_BOARD_MRFLD_HVP)		+= board-hvp.o
-obj-$(CONFIG_BOARD_MFLD_MOTO)		+= board-mmi.o
 obj-$(CONFIG_BOARD_MFLD_GXI)		+= board-gxi.o
-#obj-$(CONFIG_TOUCHSCREEN_ATMEL_MXT224)	+= board-mmi-atmxt.o
 obj-$(CONFIG_X86_INTEL_MID)		+= intel_mid_ram_info.o
